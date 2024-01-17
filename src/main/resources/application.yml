@@ -13,7 +13,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDB106Dialect
     hibernate:
       # ddl을 생성할때 전략
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         # SQL 로그를 줄바꿈해서 가독성 좋게 출력
