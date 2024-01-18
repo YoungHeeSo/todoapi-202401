@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +19,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/todos")
+@CrossOrigin(origins = {"http://localhost:3000"}) // api 접근을 허용할 클라이언트 ip,3000 포트 허용
 public class TodoController {
 
     private final TodoService todoService;
@@ -101,12 +101,11 @@ public class TodoController {
             TodoListResponseDTO dtoList = todoService.check(dto);
             return ResponseEntity.ok().body(dtoList);
 
-        }catch (Exception e){
-            return ResponseEntity
-                    .internalServerError()
-                    .body(TodoListResponseDTO
-                    .builder()
-                    .error(e.getMessage()).build());
+        } catch (Exception e){
+            return ResponseEntity.internalServerError()
+                    .body(TodoListResponseDTO.builder()
+                            .error(e.getMessage())
+                            .build());
         }
     }
 

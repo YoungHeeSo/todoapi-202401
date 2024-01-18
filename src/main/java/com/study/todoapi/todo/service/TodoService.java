@@ -36,13 +36,14 @@ public class TodoService {
 
         List<Todo> todoList = todoRepository.findAll();
 
-        // 엔터티 리스트를 DTO 리스트 으로 매핑
+        // 엔터티 리스트를 DTO리스트으로 매칭
         List<TodoDetailResponseDTO> dtoList = todoList.stream()
                 .map(TodoDetailResponseDTO::new)
                 .collect(Collectors.toList());
 
         return TodoListResponseDTO.builder()
-                .todos(dtoList).build();
+                .todos(dtoList)
+                .build();
     }
 
     // 할 일 삭제
@@ -56,7 +57,6 @@ public class TodoService {
                     id, e.getMessage());
             throw  new RuntimeException("삭제에 실패 했습니다");
         }
-
 
         return retrieve();
     }

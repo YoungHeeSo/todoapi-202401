@@ -1,5 +1,6 @@
 package com.study.todoapi.todo.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.study.todoapi.todo.entity.Todo;
 import lombok.*;
 
@@ -14,7 +15,7 @@ public class TodoDetailResponseDTO {
 
     private String id;
 
-//    @JsonProperty("todo-title") // key 값이 todo-title으로 바뀜
+//    @JsonProperty("todo-title")
     private String title;
 
     private boolean done;
@@ -23,5 +24,6 @@ public class TodoDetailResponseDTO {
     public TodoDetailResponseDTO(Todo todo){
         this.id = todo.getId();
         this.title = todo.getTitle();
+        this.done = todo.isDone();
     }
 }
