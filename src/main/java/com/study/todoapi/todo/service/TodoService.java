@@ -1,5 +1,6 @@
 package com.study.todoapi.todo.service;
 
+import com.study.todoapi.todo.dto.request.TodoCheckRequestDTO;
 import com.study.todoapi.todo.dto.request.TodoCreateRequestDTO;
 import com.study.todoapi.todo.dto.response.TodoDetailResponseDTO;
 import com.study.todoapi.todo.dto.response.TodoListResponseDTO;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +57,19 @@ public class TodoService {
             throw  new RuntimeException("삭제에 실패 했습니다");
         }
 
+
+        return retrieve();
+    }
+
+    // 할 일 체크 처리
+    public TodoListResponseDTO check(TodoCheckRequestDTO dto){
+
+        Optional<Todo> target = todoRepository.findById(dto.getId());
+
+        target.ifPresent(todo -> {
+            todo.setDone(dto.isDone());
+            todoRepository.save(todo);
+        });
 
         return retrieve();
     }

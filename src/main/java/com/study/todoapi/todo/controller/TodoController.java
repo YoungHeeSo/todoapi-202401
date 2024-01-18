@@ -1,5 +1,6 @@
 package com.study.todoapi.todo.controller;
 
+import com.study.todoapi.todo.dto.request.TodoCheckRequestDTO;
 import com.study.todoapi.todo.dto.request.TodoCreateRequestDTO;
 import com.study.todoapi.todo.dto.response.TodoListResponseDTO;
 import com.study.todoapi.todo.service.TodoService;
@@ -10,6 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController // react 사용 할때
 @Slf4j
@@ -71,9 +76,7 @@ public class TodoController {
         }
 
         try {
-
             TodoListResponseDTO dtoList = todoService.delete(id);
-
             return ResponseEntity.ok().body(dtoList);
 
         } catch (Exception e){
@@ -82,6 +85,29 @@ public class TodoController {
                     .body(TodoListResponseDTO.builder().error(e.getMessage()).build());
         }
 
+    }
+
+    // 할 일 완료 체크 처리 요청
+    @RequestMapping(method = {PUT, PATCH})
+    public ResponseEntity<?> updateTodo(
+            @RequestBody TodoCheckRequestDTO dto
+            , HttpServletRequest request
+    ){
+
+        log.info("/api/todos {}", request.getMethod());
+        log.debug("dto: {}", dto);
+
+        try {
+            TodoListResponseDTO dtoList = todoService.check(dto);
+            return ResponseEntity.ok().body(dtoList);
+
+        }catch (Exception e){
+            return ResponseEntity
+                    .internalServerError()
+                    .body(TodoListResponseDTO
+                    .builder()
+                    .error(e.getMessage()).build());
+        }
     }
 
 }
