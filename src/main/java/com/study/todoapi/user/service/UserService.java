@@ -3,6 +3,7 @@ package com.study.todoapi.user.service;
 
 import com.study.todoapi.dto.request.UserSignUpRequestDTO;
 import com.study.todoapi.dto.response.UserSignUpResponseDTO;
+import com.study.todoapi.exception.NoRegisteredArgumentsException;
 import com.study.todoapi.user.entity.User;
 import com.study.todoapi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,8 @@ public class UserService {
 
     public UserSignUpResponseDTO create(UserSignUpRequestDTO dto){
         if (dto == null){
-            throw  new RuntimeException("회원가입 입력정보가 없습니다");
+//            throw  new RuntimeException("회원가입 입력정보가 없습니다");
+            throw new NoRegisteredArgumentsException("회원가입 입력정보가 없습니다");
         }
         String email = dto.getEmail();
 
@@ -33,7 +35,12 @@ public class UserService {
 
         log.info("회원가입 성공!! saved user - {}", saved);
 
-        return new UserSignUpResponseDTO(saved);
+        return new UserSignUpResponseDTO(saved); // 회원가입 정보를 클라이언트에게 리ㅓㄴ
+    }
+
+    // 이메일 중복확인
+    public boolean isDuplicateEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 
 
