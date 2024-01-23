@@ -1,8 +1,7 @@
 package com.study.todoapi.user.service;
 
-import com.study.todoapi.dto.request.UserSignUpRequestDTO;
-import com.study.todoapi.dto.response.UserSignUpResponseDTO;
-import com.study.todoapi.todo.service.TodoService;
+import com.study.todoapi.user.dto.request.UserSignUpRequestDTO;
+import com.study.todoapi.user.dto.response.UserSignUpResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

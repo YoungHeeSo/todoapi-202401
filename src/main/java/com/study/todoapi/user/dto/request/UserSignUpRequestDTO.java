@@ -1,4 +1,4 @@
-package com.study.todoapi.dto.request;
+package com.study.todoapi.user.dto.request;
 
 import com.study.todoapi.user.entity.User;
 import lombok.*;

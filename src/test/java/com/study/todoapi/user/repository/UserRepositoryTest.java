@@ -1,6 +1,5 @@
 package com.study.todoapi.user.repository;
 
-import com.study.todoapi.dto.request.UserSignUpRequestDTO;
 import com.study.todoapi.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
