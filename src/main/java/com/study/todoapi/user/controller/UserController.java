@@ -78,6 +78,7 @@ public class UserController {
         } catch (RuntimeException e){
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
+//            return ResponseEntity.status(488).body(e.getMessage());
         }
 
     }

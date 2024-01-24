@@ -37,6 +37,7 @@ public class User {
     private LocalDateTime joinDate;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'COMMON'")
-    private Role role;
+//    @ColumnDefault("'COMMON'")
+    @Builder.Default // 회원가입 시 자동으로 기본 값 처리
+    private Role role = Role.COMMON;
 }
