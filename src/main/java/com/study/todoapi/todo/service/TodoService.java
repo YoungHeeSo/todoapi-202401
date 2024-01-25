@@ -67,6 +67,12 @@ public class TodoService {
     public TodoListResponseDTO delete(String id, String email){
 
         try {
+            Todo todo = todoRepository.findById(id).orElseThrow();
+
+            // 양방향에서는 반대편 리스트는 수동으로 갱신해야 함.
+            User user = userRepository.findByEmail(email).orElseThrow();
+            user.getTodoList().remove(todo);
+
             todoRepository.deleteById(id);
 
         } catch (Exception e){
