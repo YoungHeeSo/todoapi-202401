@@ -5,9 +5,13 @@ import com.study.todoapi.todo.dto.request.TodoCheckRequestDTO;
 import com.study.todoapi.todo.dto.request.TodoCreateRequestDTO;
 import com.study.todoapi.todo.dto.response.TodoListResponseDTO;
 import com.study.todoapi.todo.service.TodoService;
+import com.study.todoapi.user.dto.response.LoginResponseDTO;
+import com.study.todoapi.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -45,9 +49,16 @@ public class TodoController {
         try{
             TodoListResponseDTO dtoList = todoService.create(dto, userInfo.getEmail());
             return  ResponseEntity.ok().body(dtoList);
-        }catch (Exception e){
+        } catch (IllegalStateException e){
+          // 권한에 따른 에러
+          log.warn(e.getMessage());
+          return ResponseEntity
+                  .status(HttpStatus.UNAUTHORIZED) // 권한 에러
+                  .body(e.getMessage());
+
+        } catch (Exception e){
             log.error(e.getMessage());
-            return  ResponseEntity
+            return ResponseEntity
                     .internalServerError()
                     .body(TodoListResponseDTO.builder().error(e.getMessage()).build()); // TodoListResponseDTO 에러 저장
         }
@@ -95,23 +106,21 @@ public class TodoController {
     // 할 일 완료 체크 처리 요청
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> updateTodo(
-            @RequestBody TodoCheckRequestDTO dto
+            @AuthenticationPrincipal TokenUserInfo userInfo
+            , @RequestBody TodoCheckRequestDTO dto
             , HttpServletRequest request
-            , String email
     ){
 
         log.info("/api/todos {}", request.getMethod());
         log.debug("dto: {}", dto);
 
         try {
-            TodoListResponseDTO dtoList = todoService.check(dto, email);
+            TodoListResponseDTO dtoList = todoService.check(dto, userInfo.getEmail());
             return ResponseEntity.ok().body(dtoList);
 
         } catch (Exception e){
             return ResponseEntity.internalServerError()
-                    .body(TodoListResponseDTO.builder()
-                            .error(e.getMessage())
-                            .build());
+                    .body(TodoListResponseDTO.builder().error(e.getMessage()).build());
         }
     }
 
