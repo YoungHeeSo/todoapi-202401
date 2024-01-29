@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -31,10 +32,13 @@ public class UserController {
     // 회원가입 요청처리
     @PostMapping
     public ResponseEntity<?> signUp(
-            @Valid @RequestBody UserSignUpRequestDTO dto
+            @Valid @RequestPart("user") UserSignUpRequestDTO dto
+            , @RequestPart("profileImage")MultipartFile profileImg
             , BindingResult result
             ){
         log.info("/api/auth POST! - {}", dto);
+
+        if(profileImg != null) log.info("file-name: {}", profileImg.getOriginalFilename());
 
         if(result.hasErrors()){
             log.warn(result.toString());
@@ -109,5 +113,7 @@ public class UserController {
         }
 
     }
+
+
 
 }

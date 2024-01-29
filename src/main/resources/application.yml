@@ -29,3 +29,6 @@ logging:
 
 jwt:
   secret: BSlbw1fW0vQOkUVAsmtn3GTDrr5ug3ELgDkvzRkf7vKnuJyYFifaS0IBh6BUYuPlg0cAvUQr7/JkzUZBHpld7w==
+
+upload:
+  path: /Users/youngheeso/spring-prj/upload
