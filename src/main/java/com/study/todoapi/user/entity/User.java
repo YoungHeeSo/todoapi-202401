@@ -52,6 +52,5 @@ public class User {
     public void addTodo(Todo todo) {
         this.todoList.add(todo);
         todo.setUser(this);
-
     }
 }

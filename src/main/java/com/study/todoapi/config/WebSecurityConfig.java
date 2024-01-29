@@ -39,7 +39,8 @@ public class WebSecurityConfig {
                 .and()
                 // 어떤 요청에서는 인증을 하고 어떤 요청에서는 인증을 안할 건지 설정
                 .authorizeHttpRequests() // 어떤 요청에서 인증을 할 거냐?
-                .antMatchers(HttpMethod.PUT, "/api/auth/promote").hasRole(Role.COMMON.toString())
+//                .antMatchers(HttpMethod.PUT, "/api/auth/promote").hasRole(Role.COMMON.toString())
+//                .antMatchers(HttpMethod.PUT, "/api/auth/promote").hasRole("COMMON")
                 .antMatchers("/", "/api/auth/**").permitAll() // 이 요청은 인증을 안해도 됨!
 //                    .antMatchers(HttpMethod.POST, "/api/todos").permitAll()
 //                    .antMatchers("/**").hasRole("ADMIN")
@@ -48,7 +49,6 @@ public class WebSecurityConfig {
 
         // 토큰 인증 필터 연결하기
         http.addFilterAfter(jwtAuthFilter, CorsFilter.class);
-
 
         return http.build();
     }

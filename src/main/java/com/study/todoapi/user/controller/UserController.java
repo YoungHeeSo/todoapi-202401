@@ -16,9 +16,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @Slf4j
@@ -38,7 +40,6 @@ public class UserController {
             ){
         log.info("/api/auth POST! - {}", dto);
 
-        if(profileImg != null) log.info("file-name: {}", profileImg.getOriginalFilename());
 
         if(result.hasErrors()){
             log.warn(result.toString());
@@ -49,13 +50,23 @@ public class UserController {
         }
 
         try {
-            UserSignUpResponseDTO responseDTO = userService.create(dto);
+            String uploadProfileImagePath = null;
+
+            if(profileImg != null) {
+                log.info("file-name: {}", profileImg.getOriginalFilename());
+                uploadProfileImagePath = userService.uploadProfileImage(profileImg);
+            }
+
+            UserSignUpResponseDTO responseDTO = userService.create(dto, uploadProfileImagePath);
             return ResponseEntity.ok().body(responseDTO);
         } catch (NoRegisteredArgumentsException e) {
             log.warn("필수 가입 정보를 전달받지 못했습니다!!");
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (DuplicatedEmailException e) {
             log.warn("이메일이 중복되었습니다.");
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e) { // 파일 업로드 하다가 터지는 오류
+            log.warn("파일 업로드 경로가 잘못 되었거나 파일 저장에 실패했습니다.");
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
@@ -94,7 +105,7 @@ public class UserController {
     @PutMapping("/promote")
     // 이 권한을 가진 사람만 이 요청을 수행할 수 있고
     // 이 권한이 아닌 유저는 강제로 403이 응답 됨.
-    @PreAuthorize("hasRole('COMMON')") // 일반 회원만 검사 가능함
+    @PreAuthorize("hasRole('ROLE_COMMON')") // 일반 회원만 검사 가능함
 //    @PreAuthorize("hasRole(ROLE_COMMON) or hasRole(ROLE_ADMIN") // 일반 회원, 관리자
     public ResponseEntity<?> promote(
             @AuthenticationPrincipal TokenUserInfo userInfo
@@ -106,14 +117,12 @@ public class UserController {
             return ResponseEntity.ok().body(responseDTO);
         } catch (IllegalStateException e){
             log.warn(e.getMessage());
-            return  ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e){
             log.warn(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
     }
-
-
 
 }

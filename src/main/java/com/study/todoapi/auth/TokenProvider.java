@@ -92,11 +92,14 @@ public class TokenProvider {
 
         log.info("claims: {}", claims);
 
-        return TokenUserInfo.builder()
+        TokenUserInfo build = TokenUserInfo.builder()
                 .userId(claims.getSubject())
                 .email(claims.get("email", String.class))
                 .role(Role.valueOf(claims.get("role", String.class)))
                 .build();
+        log.info("token user: {}", build);
+
+        return  build;
     }
 
 

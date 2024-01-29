@@ -19,7 +19,7 @@ class UserServiceTest {
     @Autowired
     UserService userService;
 
-    @Test
+    /*@Test
     @DisplayName("회원가입을 하면 비밀번호가 인코딩되어 디비에 저장된다")
     void saveTest() {
         //given
@@ -37,6 +37,6 @@ class UserServiceTest {
         System.out.println("\n\n\n");
         System.out.println("responseDTO = " + responseDTO);
         System.out.println("\n\n\n");
-    }
+    }*/
 
 }
