@@ -125,5 +125,14 @@ public class UserService {
         return uniqueFileName;
     }
 
+    // 로그인 한 회원의 프로필 사진 저장 경로를 조회
+    public String getProfilePath(String email){
+
+        // db에서 파일명을 조회
+        User user = userRepository.findByEmail(email).orElseThrow();
+        String fileName = user.getProfileImg();
+
+        return rootPath + "/" + fileName;
+    }
 
 }

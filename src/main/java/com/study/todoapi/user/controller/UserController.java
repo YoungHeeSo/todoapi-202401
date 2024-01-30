@@ -8,11 +8,15 @@ import com.study.todoapi.user.dto.response.UserSignUpResponseDTO;
 import com.study.todoapi.exception.DuplicatedEmailException;
 import com.study.todoapi.exception.NoRegisteredArgumentsException;
 import com.study.todoapi.user.service.UserService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 
 @RestController
@@ -35,9 +40,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> signUp(
             @Valid @RequestPart("user") UserSignUpRequestDTO dto
-            , @RequestPart("profileImage")MultipartFile profileImg
+            , @RequestPart(value = "profileImage", required = false)MultipartFile profileImg // 회원가입 노필수로 설정
             , BindingResult result
-            ){
+        ){
         log.info("/api/auth POST! - {}", dto);
 
 
@@ -123,6 +128,65 @@ public class UserController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
+    }
+
+    // 파일을 클라이언트에 전송하기
+    @GetMapping("/load-profile")
+    public ResponseEntity<?> loadProfile(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
+
+        try {
+            // 로그인한 회원의 프로필 사진 바이너리 데이터를 클라이언트에게 전송해야 함
+            // 1. 해당 회원의 프로필이 저장된 경로와 파일명을 알아내야 함.
+            // -> 파일명은 데이터베이스를 조회해야 함
+            String profilePath = userService.getProfilePath(userInfo.getEmail());
+
+            // 2. 얻어낸 파일경로를 통해 실제 데이터 가져오기
+            File profileFile = new File(profilePath);
+
+            if (!profileFile.exists()) return ResponseEntity.notFound().build();
+
+            // 서버에 저장된 파일을 직렬화하여 바이트배열로 만들어서 가져옴
+            byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
+
+            // 3. 응답헤더에 이 데이터의 타입이 무엇인지를 설정해야 함.
+            HttpHeaders headers = new HttpHeaders();
+            MediaType mediaType = extractFileExtension(profilePath);
+            if (mediaType == null) {
+                return ResponseEntity.internalServerError()
+                        .body("발견된 파일은 이미지가 아닙니다.");
+            }
+            headers.setContentType(mediaType);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+
+    // 파일의 확장자를 추출하여 미디어타입을 알려주는 메서드
+    private MediaType extractFileExtension(String filePath) {
+
+        // D:/abc/def/image/sdjlfjslfajdfjlsajkl_cat.png
+        String ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+        switch (ext.toUpperCase()) {
+            case "JPEG": case "JPG":
+                return MediaType.IMAGE_JPEG;
+            case "PNG":
+                return MediaType.IMAGE_PNG;
+            case "GIF":
+                return MediaType.IMAGE_GIF;
+            default:
+                return null;
+        }
     }
 
 }
