@@ -8,7 +8,6 @@ import com.study.todoapi.user.dto.response.UserSignUpResponseDTO;
 import com.study.todoapi.exception.DuplicatedEmailException;
 import com.study.todoapi.exception.NoRegisteredArgumentsException;
 import com.study.todoapi.user.service.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +19,6 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;

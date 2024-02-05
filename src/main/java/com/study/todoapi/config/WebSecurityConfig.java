@@ -42,7 +42,7 @@ public class WebSecurityConfig {
 //                .antMatchers(HttpMethod.PUT, "/api/auth/promote").hasRole(Role.COMMON.toString())
 //                .antMatchers(HttpMethod.PUT, "/api/auth/promote").hasRole("COMMON")
                 .antMatchers("/api/auth/load-profile").authenticated()
-                .antMatchers("/", "/api/auth/**").permitAll() // 이 요청은 인증을 안해도 됨!
+                .antMatchers("/", "/api/auth/**", "/api/side/**").permitAll() // 이 요청은 인증을 안해도 됨!
 //                    .antMatchers(HttpMethod.POST, "/api/todos").permitAll()
 //                    .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated() // 그 외의 요청은 인증(로그인)을 받아라!!

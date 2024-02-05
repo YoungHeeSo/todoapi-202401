@@ -9,7 +9,9 @@ import com.study.todoapi.user.dto.response.LoginResponseDTO;
 import com.study.todoapi.user.dto.response.UserSignUpResponseDTO;
 import com.study.todoapi.exception.NoRegisteredArgumentsException;
 import com.study.todoapi.user.entity.Role;
+import com.study.todoapi.side.entity.SideMenuImage;
 import com.study.todoapi.user.entity.User;
+import com.study.todoapi.side.repository.SideMenuImageRepository;
 import com.study.todoapi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -134,5 +136,6 @@ public class UserService {
 
         return rootPath + "/" + fileName;
     }
+
 
 }

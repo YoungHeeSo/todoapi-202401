@@ -38,3 +38,6 @@ jwt:
 
 upload:
   path: /Users/youngheeso/spring-prj/upload
+
+sideMenu:
+  path: /Users/youngheeso/spring-prj/sideMenu
